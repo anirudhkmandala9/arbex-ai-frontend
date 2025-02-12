@@ -1,77 +1,43 @@
-import "./App.css";
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  text-align: center;
-  padding: 20px;
+import React, { useState } from "react";
+import "./App.css"; // Importing CSS for styling
+
+function App() {
+  const [query, setQuery] = useState("");
+  const [response, setResponse] = useState("");
+
+  const handleAsk = async () => {
+    const res = await fetch(`https://arbex-ai-backend.onrender.com/chatbot?query=${query}`);
+    const data = await res.json();
+    setResponse(data.response);
+  };
+
+  return (
+    <div className="container">
+      <h1 className="arbex-title">ARBEX AI</h1>
+      
+      <div className="chat-section">
+        <input 
+          type="text" 
+          placeholder="Ask something..." 
+          value={query} 
+          onChange={(e) => setQuery(e.target.value)} 
+        />
+        <button onClick={handleAsk}>Ask</button>
+      </div>
+
+      {response && <div className="response-box">{response}</div>}
+
+      <div className="stock-section">
+        <h2>Stock Market Charts</h2>
+        {/* Stock chart component can be added here */}
+      </div>
+
+      <div className="news-section">
+        <h2>Market News</h2>
+        {/* Market news component can be added here */}
+      </div>
+    </div>
+  );
 }
 
-.container {
-  max-width: 600px;
-  margin: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
-
-.arbex-title {
-  color: green;
-  font-size: 28px;
-  margin-bottom: 20px;
-}
-
-.chat-section,
-.stock-section {
-  margin-bottom: 20px;
-}
-
-input {
-  width: 80%;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  margin-bottom: 10px;
-}
-
-button {
-  padding: 10px 20px;
-  background-color: green;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: darkgreen;
-}
-
-.response-box {
-  background: #e0e0e0;
-  padding: 10px;
-  border-radius: 5px;
-  margin-top: 10px;
-  text-align: left;
-}
-
-.chart-container {
-  width: 100%;
-  height: 300px;
-}
-
-.news-section {
-  margin-top: 20px;
-}
-
-.news-item {
-  background: #f4f4f4;
-  padding: 10px;
-  margin: 5px;
-  border-radius: 5px;
-}
-
-.news-item a {
-  text-decoration: none;
-  color: blue;
-}
+export default App;
