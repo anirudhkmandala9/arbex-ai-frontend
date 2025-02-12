@@ -1,41 +1,58 @@
-import React, { useState } from "react";
-import "./App.css"; // Importing CSS
+import React, { useState, useEffect } from "react";
+import { Line } from "react-chartjs-2";
+import "./App.css";
 
 function App() {
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState("");
+  const [chartData, setChartData] = useState(null);
 
-  const handleAsk = async () => {
-    const res = await fetch(`https://arbex-ai-backend.onrender.com/chatbot?query=${query}`);
+  const fetchStockChart = async (symbol) => {
+    const res = await fetch(`https://arbex-ai-backend.onrender.com/chart/${symbol}`);
     const data = await res.json();
-    setResponse(data.response);
+    
+    if (data.labels) {
+      setChartData({
+        labels: data.labels,
+        datasets: [
+          {
+            label: symbol,
+            data: data.datasets[0].data,
+            borderColor: "green",
+            fill: false,
+          },
+        ],
+      });
+    } else {
+      setResponse("Stock data not available.");
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (query.toLowerCase().includes("chart")) {
+      const symbol = query.split(" ")[1]; // Extract symbol from input
+      fetchStockChart(symbol);
+    } else {
+      const res = await fetch(`https://arbex-ai-backend.onrender.com/chatbot?query=${query}`);
+      const data = await res.json();
+      setResponse(data.response);
+    }
   };
 
   return (
     <div className="container">
       <h1 className="arbex-title">ARBEX AI</h1>
-
-      <div className="chat-section">
-        <input
-          type="text"
-          placeholder="Ask something..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <button onClick={handleAsk}>Ask</button>
-      </div>
-
+      <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Ask something..." />
+      <button onClick={handleSubmit}>Ask</button>
+      
       {response && <div className="response-box">{response}</div>}
-
-      <div className="stock-section">
-        <h2>Stock Market Charts</h2>
-        {/* Stock chart component can be added here */}
-      </div>
-
-      <div className="news-section">
-        <h2>Market News</h2>
-        {/* Market news component can be added here */}
-      </div>
+      
+      {chartData && (
+        <div className="chart-container">
+          <h2>Stock Chart</h2>
+          <Line data={chartData} />
+        </div>
+      )}
     </div>
   );
 }
