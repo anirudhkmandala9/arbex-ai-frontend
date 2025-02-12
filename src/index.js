@@ -1,7 +1,8 @@
 // src/index.js
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/App';
+import App from './App'; // ✅ Correct path if "App.js" is in "src"
+
 
 
 ReactDOM.render(
