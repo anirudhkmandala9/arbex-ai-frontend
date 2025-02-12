@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import App from './App'; // ✅ Correct path if "App.js" is in "src"
- // Importing CSS
+import "./App.css"; // Importing CSS
 
 function App() {
   const [query, setQuery] = useState("");
