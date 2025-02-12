@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./App.css"; // Importing CSS for styling
+import "./App.css"; // Importing CSS
 
 function App() {
   const [query, setQuery] = useState("");
@@ -14,13 +14,13 @@ function App() {
   return (
     <div className="container">
       <h1 className="arbex-title">ARBEX AI</h1>
-      
+
       <div className="chat-section">
-        <input 
-          type="text" 
-          placeholder="Ask something..." 
-          value={query} 
-          onChange={(e) => setQuery(e.target.value)} 
+        <input
+          type="text"
+          placeholder="Ask something..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
         />
         <button onClick={handleAsk}>Ask</button>
       </div>
