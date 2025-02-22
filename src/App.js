@@ -22,8 +22,8 @@ function App() {
         const data = await res.json();
         console.log(data);  // Check in browser console
 
-        if (data.c) {
-            setStockPrice(`Current price of ${symbol}: $${data.c}`);
+        if (data.current_price) {
+            setStockPrice(`Current price of ${symbol}: $${data.current_price}`);
         } else {
             setStockPrice("Stock data not available.");
         }
@@ -32,6 +32,7 @@ function App() {
         setStockPrice("Error retrieving data.");
     }
 };
+
 
   // Fetch Stock Chart
   const fetchStockChart = async (symbol) => {
