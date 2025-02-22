@@ -1,49 +1,82 @@
 import React, { useState } from "react";
+import { Line } from "react-chartjs-2";
 import "./App.css";
 
 function App() {
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState("");
-  const [stockData, setStockData] = useState(null);
+  const [chartData, setChartData] = useState(null);
+  const [stockPrice, setStockPrice] = useState(null);
 
-  const handleSubmit = async () => {
-    if (query.toLowerCase().includes("stock price")) {
-      const words = query.split(" ");
-      const symbol = words[words.length - 1].toUpperCase(); // Extract stock symbol
-      fetchStockData(symbol);
+  // Fetch AI Response
+  const fetchAIResponse = async () => {
+    const res = await fetch(`https://arbex-ai-backend.onrender.com/chatbot?query=${query}`);
+    const data = await res.json();
+    setResponse(data.response || "Error fetching AI response.");
+  };
+
+  // Fetch Stock Data
+  const fetchStockData = async (symbol) => {
+    const res = await fetch(`https://arbex-ai-backend.onrender.com/finance/${symbol}`);
+    const data = await res.json();
+    
+    if (data.c) {
+      setStockPrice(`Current Price: $${data.c}`);
     } else {
-      fetchChatbotResponse();
+      setStockPrice("Stock data not available.");
     }
   };
 
-  const fetchChatbotResponse = async () => {
-    const res = await fetch(`https://arbex-ai-backend.onrender.com/chatbot?query=${query}`);
+  // Fetch Stock Chart
+  const fetchStockChart = async (symbol) => {
+    const res = await fetch(`https://arbex-ai-backend.onrender.com/chart/${symbol}`);
     const data = await res.json();
-    setResponse(data.response);
-    setStockData(null); // Clear stock data if chatbot response is used
+    
+    if (data.labels) {
+      setChartData({
+        labels: data.labels.map(ts => new Date(ts * 1000).toLocaleDateString()),
+        datasets: [
+          {
+            label: symbol,
+            data: data.datasets[0].data,
+            borderColor: "green",
+            fill: false,
+          },
+        ],
+      });
+    } else {
+      setChartData(null);
+    }
   };
 
-  const fetchStockData = async (symbol) => {
-    const res = await fetch(`https://arbex-ai-backend.onrender.com/stock/${symbol}`);
-    const data = await res.json();
-
-    if (data.current_price) {
-      setStockData(data);
-      setResponse(""); // Clear chatbot response if stock data is available
+  // Handle Submit
+  const handleSubmit = async () => {
+    if (query.toLowerCase().startsWith("stock")) {
+      const symbol = query.split(" ")[1]; // Extract stock symbol
+      fetchStockData(symbol);
+      fetchStockChart(symbol);
     } else {
-      setResponse("Stock data not available.");
-      setStockData(null);
+      fetchAIResponse();
     }
   };
 
   return (
     <div className="container">
       <h1 className="arbex-title">ARBEX AI</h1>
-      <input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Ask about stocks..."
-      />
+      <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Ask something..." />
       <button onClick={handleSubmit}>Ask</button>
+      
+      {response && <div className="response-box">{response}</div>}
+      {stockPrice && <div className="response-box">{stockPrice}</div>}
 
-      {response &&
+      {chartData && (
+        <div className="chart-container">
+          <h2>Stock Chart</h2>
+          <Line data={chartData} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App;
