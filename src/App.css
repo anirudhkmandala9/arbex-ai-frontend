@@ -1,81 +1,127 @@
+/* General Styles */
 body {
-  font-family: Arial, sans-serif;
   background-color: #f4f4f4;
+  font-family: "Arial", sans-serif;
   text-align: center;
-}
-
-.chat-container {
-  max-width: 600px;
-  margin: 40px auto;
   padding: 20px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.arbex-title {
-  color: green;
+/* Chat Container */
+.chat-container {
+  max-width: 500px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  color: #009879;
   font-size: 24px;
+  font-weight: bold;
   margin-bottom: 15px;
 }
 
+/* Chat Box */
 .chat-box {
   height: 300px;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
   border: 1px solid #ddd;
+  border-radius: 10px;
   padding: 10px;
   background: #fafafa;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
 }
 
-.chat-message {
+.empty-chat {
+  color: #999;
+  text-align: center;
+  margin-top: 120px;
+}
+
+/* Chat Messages */
+.message {
+  max-width: 75%;
   padding: 10px;
   margin: 5px;
   border-radius: 10px;
-  max-width: 80%;
+  font-size: 14px;
+  animation: fadeIn 0.3s ease-in-out;
 }
 
 .user {
-  background-color: #0084ff;
+  background: #009879;
   color: white;
   align-self: flex-end;
 }
 
-.ai {
-  background-color: #e5e5ea;
+.bot {
+  background: #ddd;
   color: black;
   align-self: flex-start;
 }
 
-.typing-indicator {
-  font-style: italic;
-  color: gray;
-  margin-top: 5px;
+/* Loading Animation */
+.loading {
+  font-size: 16px;
+  color: #009879;
+  margin-top: 10px;
+  animation: blink 1s infinite;
 }
 
+@keyframes blink {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+
+/* Input & Buttons */
 .input-container {
   display: flex;
-  gap: 10px;
   margin-top: 10px;
 }
 
-input {
+.input-box {
   flex: 1;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
+  font-size: 14px;
 }
 
-button {
-  padding: 10px;
-  background: green;
+.ask-btn {
+  background: #009879;
   color: white;
   border: none;
-  cursor: pointer;
+  padding: 10px;
+  margin-left: 5px;
   border-radius: 5px;
+  cursor: pointer;
 }
 
-button:hover {
-  background: darkgreen;
+.clear-btn {
+  background: #ff5c5c;
+  color: white;
+  border: none;
+  padding: 10px;
+  margin-left: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.ask-btn:hover {
+  background: #007c67;
+}
+
+.clear-btn:hover {
+  background: #d94545;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
