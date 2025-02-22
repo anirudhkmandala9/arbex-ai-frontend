@@ -1,64 +1,74 @@
-import React, { useState, useEffect, useRef } from "react";
-import "./App.css";
+import React, { useState } from "react";
+import "./App.css"; // Make sure to update the CSS file for better styling
 
-function App() {
+const App = () => {
   const [query, setQuery] = useState("");
-  const [messages, setMessages] = useState([]); // Store chat history
-  const [isLoading, setIsLoading] = useState(false);
-  const chatContainerRef = useRef(null); // For auto-scrolling
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchResponse = async () => {
-    if (!query.trim()) return; // Prevent empty messages
-    setIsLoading(true);
-
-    const userMessage = { text: query, sender: "user" };
-    setMessages((prevMessages) => [...prevMessages, userMessage]);
+    if (!query.trim()) return;
+    setLoading(true);
+    
+    const userMessage = { text: query, type: "user" };
+    setMessages((prev) => [...prev, userMessage]);
 
     try {
-      const res = await fetch(
-        `https://arbex-ai-backend.onrender.com/chatbot?query=${query}`
-      );
-      const data = await res.json();
-      const aiMessage = { text: data.response, sender: "ai" };
-
-      setMessages((prevMessages) => [...prevMessages, aiMessage]);
+      const response = await fetch(`https://arbex-ai-backend.onrender.com/chatbot?query=${query}`);
+      const data = await response.json();
+      
+      const botMessage = { text: data.response, type: "bot" };
+      setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { text: "Error: Unable to get response.", sender: "ai" },
-      ]);
+      setMessages((prev) => [...prev, { text: "Error fetching response.", type: "bot" }]);
     }
 
-    setIsLoading(false);
-    setQuery(""); // Clear input after sending
+    setQuery("");
+    setLoading(false);
   };
 
-  useEffect(() => {
-    chatContainerRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      fetchResponse();
+    }
+  };
+
+  const clearChat = () => {
+    setMessages([]);
+  };
 
   return (
     <div className="chat-container">
-      <h1 className="arbex-title">ARBEX AI</h1>
+      <h1 className="title">ARBEX AI</h1>
+      
       <div className="chat-box">
-        {messages.map((msg, index) => (
-          <div key={index} className={`chat-message ${msg.sender}`}>
-            {msg.text}
-          </div>
-        ))}
-        {isLoading && <div className="typing-indicator">AI is typing...</div>}
-        <div ref={chatContainerRef}></div>
+        {messages.length === 0 ? (
+          <p className="empty-chat">Ask something to start...</p>
+        ) : (
+          messages.map((msg, index) => (
+            <div key={index} className={`message ${msg.type}`}>
+              {msg.text}
+            </div>
+          ))
+        )}
+
+        {loading && <div className="loading">...</div>}
       </div>
+
       <div className="input-container">
         <input
+          type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Ask Arbex AI..."
+          onKeyPress={handleKeyPress}
+          placeholder="Ask something..."
+          className="input-box"
         />
-        <button onClick={fetchResponse}>Ask</button>
+        <button onClick={fetchResponse} className="ask-btn">Ask</button>
+        <button onClick={clearChat} className="clear-btn">Clear</button>
       </div>
     </div>
   );
-}
+};
 
 export default App;
