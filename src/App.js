@@ -16,16 +16,22 @@ function App() {
   };
 
   // Fetch Stock Data
-  const fetchStockData = async (symbol) => {
-    const res = await fetch(`https://arbex-ai-backend.onrender.com/finance/${symbol}`);
-    const data = await res.json();
-    
-    if (data.c) {
-      setStockPrice(`Current Price: $${data.c}`);
-    } else {
-      setStockPrice("Stock data not available.");
+ const fetchStockData = async (symbol) => {
+    try {
+        const res = await fetch(`https://arbex-ai-backend.onrender.com/stock/${symbol}`);
+        const data = await res.json();
+        console.log(data);  // Check in browser console
+
+        if (data.c) {
+            setStockPrice(`Current price of ${symbol}: $${data.c}`);
+        } else {
+            setStockPrice("Stock data not available.");
+        }
+    } catch (error) {
+        console.error("Error fetching stock data:", error);
+        setStockPrice("Error retrieving data.");
     }
-  };
+};
 
   // Fetch Stock Chart
   const fetchStockChart = async (symbol) => {
